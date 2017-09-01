@@ -1,13 +1,15 @@
 #!/usr/bin/env python2.7
 # This script takes in a file like
 # /Users/jduan/workspace/path/to/file/in/git/repo
-# and opens it in stash.
+# and opens it in remote git server.
 
 import os
 import sys
 import subprocess
 
-URL_TEMPLATE = "https://source.fitbit.com/projects/%s/repos/%s/browse/%s"
+# URL_TEMPLATE = "https://source.fitbit.com/projects/%s/repos/%s/browse/%s"
+URL_TEMPLATE = "https://git.musta.ch/%s/%s/blob/master/%s"
+
 
 def locate_git_repo(filepath):
     while True:
@@ -25,11 +27,21 @@ def find_group_and_repo_name(dirname):
     os.chdir(dirname)
     output = subprocess.check_output("git config --get remote.origin.url", shell=True)
     # output looks like: ssh://git@source.fitbit.com/group/repo_name.git
-    parts = output.rstrip().split("/")
-    group = parts[-2]
-    repo_name = parts[-1]
-    # remote the ".git" extension
-    repo_name = repo_name.split(".")[0]
+    # git@git.musta.ch:airbnb/deployboard.git
+    if output.startswith('ssh'):
+        parts = output.rstrip().split("/")
+        group = parts[-2]
+        repo_name = parts[-1]
+        # remote the ".git" extension
+        repo_name = repo_name.split(".")[0]
+    elif output.startswith('git'):
+        parts = output.split(':')[1].split('/')
+        group = parts[0]
+        repo_name = parts[1]
+        # remote the ".git" extension
+        repo_name = repo_name.split(".")[0]
+    else:
+        raise "Unknown git remote: %s" % output
     return (group, repo_name)
 
 filepath = os.path.realpath(sys.argv[1])
