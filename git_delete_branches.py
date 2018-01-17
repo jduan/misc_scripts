@@ -6,7 +6,8 @@ import sys
 parser = argparse.ArgumentParser(description='Argument Parser')
 parser.add_argument('--branch-prefix', '-b', dest='branch_prefix', action='store',
                     default='jduan',
-                    help='The prefix for branches that should not be deleted.')
+                    help='The prefix for branches that should not be deleted. ' +
+                    'The master branch is automatically included.')
 parser.add_argument('--confirmation', dest='confirmation', action='store_true',
                     help='Ask the user for confirmation')
 parser.add_argument('--no-confirmation', dest='confirmation',
@@ -46,6 +47,7 @@ def user_confirmation():
 
 
 branches = filter_branches(list_branches(), args.branch_prefix)
+branches = filter_branches(branches, 'master')
 print("Branches:\n\n%s\n" % "  \n".join(branches))
 if branches:
     if args.confirmation:
