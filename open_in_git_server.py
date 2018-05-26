@@ -20,22 +20,24 @@ def locate_git_repo(filepath):
             return parent_dir
         filepath = parent_dir
 
+
 def find_filepath_from_repo_root(repo_dir, filepath):
-    return filepath[len(repo_dir) + 1:]
+    return filepath[len(repo_dir) + 1 :]
+
 
 def find_group_and_repo_name(dirname):
     os.chdir(dirname)
     output = subprocess.check_output("git config --get remote.origin.url", shell=True)
     # output looks like: ssh://git@source.fitbit.com/group/repo_name.git
     # git@git.musta.ch:airbnb/deployboard.git
-    if output.startswith('ssh'):
+    if output.startswith("ssh"):
         parts = output.rstrip().split("/")
         group = parts[-2]
         repo_name = parts[-1]
         # remote the ".git" extension
         repo_name = repo_name.split(".")[0]
-    elif output.startswith('git'):
-        parts = output.split(':')[1].split('/')
+    elif output.startswith("git"):
+        parts = output.split(":")[1].split("/")
         group = parts[0]
         repo_name = parts[1]
         # remote the ".git" extension
@@ -43,6 +45,7 @@ def find_group_and_repo_name(dirname):
     else:
         raise "Unknown git remote: %s" % output
     return (group, repo_name)
+
 
 filepath = os.path.realpath(sys.argv[1])
 dirname = locate_git_repo(filepath)
