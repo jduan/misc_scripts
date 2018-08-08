@@ -24,10 +24,15 @@ def role_valid?(role)
   j['nodes'].size > 0
 end
 
+all_roles = []
 config['targets'].each do |target, values|
   puts "=========#{target}============"
   roles = values['roles'].keys.select do |role|
     role_valid?(role)
   end
   puts roles.join(',')
+  all_roles.concat(roles)
 end
+
+puts "========= ALL ROLES ============"
+puts all_roles.join(',')
